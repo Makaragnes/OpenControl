@@ -1,11 +1,11 @@
-package com.example.opencontrol.view.screens.videocall
+package com.example.opencontrol
 
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.example.opencontrol.R
+import com.example.opencontrol.databinding.ActivityCallBinding
 import com.example.opencontrol.model.webrtcModels.IceCandidateModel
 import com.example.opencontrol.model.webrtcModels.MessageModel
 import com.example.opencontrol.repository.SocketRepository

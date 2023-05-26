@@ -1,4 +1,7 @@
 package com.example.opencontrol.model.webrtcModels
 
-class IceCandidateModel {
-}
+data class IceCandidateModel(
+    val sdpMid:String,
+    val sdpMLineIndex:Double,
+    val sdpCandidate:String
+)
