@@ -50,6 +50,8 @@ import com.example.opencontrol.ui.theme.OpenControlTheme
 import com.example.opencontrol.ui.theme.Rose
 import com.example.opencontrol.view.items.BottomNavigationBar
 import com.example.opencontrol.view.screens.LoginScreen
+import com.example.opencontrol.view.screens.profile.profileItems.RowWithEditText
+import com.example.opencontrol.view.screens.profile.profileItems.RowWithText
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "UnusedMaterialScaffoldPaddingParameter")
@@ -62,10 +64,10 @@ fun ProfileMainScreen(navController: NavController) {
     window.statusBarColor = Rose.toArgb()
     window.navigationBarColor = Rose.toArgb()
 
-    var text by rememberSaveable { mutableStateOf("") }
+    var text = remember { mutableStateOf("") }
 
     //val enabledFields by rememberSaveable { mutableStateOf(false) }
-    val enabledFields = remember {
+    var enabledField = remember {
         mutableStateOf(false)
     }
 
@@ -97,77 +99,48 @@ fun ProfileMainScreen(navController: NavController) {
                 )
             }
 
-            Row(
-                modifier = Modifier
-                    .padding(8.dp, 16.dp, 8.dp, 0.dp)
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.Start,
-                verticalAlignment = Alignment.Top
-            ){
-                Text(
-                    modifier = Modifier.padding(8.dp, 0.dp, 0.dp, 0.dp),
-                    text = "Личная информация",
-                    textAlign = TextAlign.Left,
-                    fontWeight = FontWeight.W400,
-                    fontSize = 15.sp,
-                    color = DarkGrey
-                )
-            }
+            RowWithText("Личная информация")
+            RowWithEditText(
+                title = "ФИО",
+                description = "Введите ваши инициалы",
+                icon = 1,
+                textState = text,
+                enableField = enabledField
+            )
 
-            Row(
-                modifier = Modifier
-                    .padding(8.dp, 8.dp, 8.dp, 8.dp)
-                    .clip(RoundedCornerShape(16.dp, 16.dp, 16.dp, 16.dp))
-                    .background(Rose)
-                    .clickable { enabledFields.value = !enabledFields.value }
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.Start,
-                verticalAlignment = Alignment.CenterVertically
-            ){
-                Text(
-                    modifier = Modifier.padding(8.dp, 8.dp, 8.dp, 8.dp),
-                    text = "ФИО: ",
-                    textAlign = TextAlign.Left,
-                    fontWeight = FontWeight.W400,
-                    fontSize = 15.sp,
-                    color = Color.Black
-                )
-                OutlinedTextField(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(0.dp, 0.dp, 16.dp, 8.dp),
-                    value = text,
-                    enabled = enabledFields.value,
-                    leadingIcon = { Icon(imageVector = Icons.Default.Person, contentDescription = "emailIcon") },
-                    //trailingIcon = { Icon(imageVector = Icons.Default.Add, contentDescription = null) },
-                    onValueChange = {
-                        text = it
-                    },
-                    label = { Text(text = "ФИО") },
-                    placeholder = { Text(text = "Введите ваши инициалы") },
-                )
-//                TextField(
-//                    value = text,
-//                    onValueChange = { text = it },
-//                    enabled = true,
-//                    label = { Text(
-//                        modifier = Modifier.padding(0.dp, 8.dp, 8.dp, 8.dp),
-//                        text = "Молодцов Владислав Сергеевич",
-//                        textAlign = TextAlign.Left,
-//                        fontWeight = FontWeight.W400,
-//                        fontSize = 15.sp,
-//                        color = DarkGrey
-//                    ) },
-//                    singleLine = true
-//                )
+//            Row(
+//                modifier = Modifier
+//                    .padding(8.dp, 8.dp, 8.dp, 8.dp)
+//                    .clip(RoundedCornerShape(16.dp, 16.dp, 16.dp, 16.dp))
+//                    .background(Rose)
+//                    .clickable { enabledField.value = !enabledField.value }
+//                    .fillMaxWidth(),
+//                horizontalArrangement = Arrangement.Start,
+//                verticalAlignment = Alignment.CenterVertically
+//            ){
 //                Text(
-//                    text = "Молодцов Владислав Сергеевич ",
-//                    textAlign = TextAlign.Center,
+//                    modifier = Modifier.padding(8.dp, 8.dp, 8.dp, 8.dp),
+//                    text = "ФИО: ",
+//                    textAlign = TextAlign.Left,
 //                    fontWeight = FontWeight.W400,
-//                    fontSize = 16.sp,
+//                    fontSize = 15.sp,
 //                    color = Color.Black
 //                )
-            }
+//                OutlinedTextField(
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .padding(0.dp, 0.dp, 16.dp, 8.dp),
+//                    value = text,
+//                    enabled = enabledField.value,
+//                    leadingIcon = { Icon(imageVector = Icons.Default.Person, contentDescription = "emailIcon") },
+//                    //trailingIcon = { Icon(imageVector = Icons.Default.Add, contentDescription = null) },
+//                    onValueChange = {
+//                        text = it
+//                    },
+//                    label = { Text(text = "ФИО") },
+//                    placeholder = { Text(text = "Введите ваши инициалы") },
+//                )
+//            }
         }
     }
 }

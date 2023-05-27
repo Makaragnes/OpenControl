@@ -2,6 +2,7 @@ package com.example.opencontrol.view.screens
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
@@ -103,6 +104,8 @@ fun MainScreen(navController: NavController){
         mainViewModel.getDepartments()
     }
 
+
+
     Scaffold(
         modifier = Modifier.statusBarsPadding(),
         bottomBar = {
@@ -166,6 +169,7 @@ fun MainScreen(navController: NavController){
                         .padding(8.dp, 8.dp, 8.dp, 8.dp),
                 ) {
                     items(mainViewModel.resp) { m ->
+                        Log.d("GGG", "$BASE_URL/$m.link")
                         Surface(
                             modifier = Modifier
                                 .padding(8.dp, 0.dp, 8.dp, 0.dp)
@@ -227,7 +231,7 @@ fun MainScreen(navController: NavController){
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 AsyncImage(
                                     //painter = painterResource(id = R.drawable.tradeservice),
-                                    model = BASE_URL + m.link.drop(1),
+                                    model = "$BASE_URL/${m.link}",
                                     contentDescription = "in",
                                     modifier = Modifier
                                         .size(128.dp)
@@ -241,7 +245,8 @@ fun MainScreen(navController: NavController){
                                         //.padding(4.dp, 12.dp, 4.dp, 4.dp)
                                         .fillMaxSize()
 
-                                        .background(transparent_color)
+                                        .background(transparent_color),
+                                    horizontalArrangement = Arrangement.Center
                                 ) {
                                     Text(
                                         textAlign = TextAlign.Center,

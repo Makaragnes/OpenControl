@@ -27,11 +27,16 @@ class LoginScreenViewModel @Inject constructor(
     private var _movieResponse = MutableLiveData<Response<DogResponse>>()
     val movieResponse: LiveData<Response<DogResponse>> = _movieResponse
 
-    val availableServer = mutableStateOf(true)
+    val availableServer = mutableStateOf(false)
 
     fun getHome() {
         viewModelScope.launch {
-            resp.value = mainRepository.getHome().body()
+            try {
+                resp.value = mainRepository.getHome().body()
+                availableServer.value = true
+            } catch (e: Exception) {
+                e.stackTrace
+            }
         }
     }
 
