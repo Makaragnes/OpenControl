@@ -32,26 +32,21 @@ async def create_item( item_id: int):
 #part  of the  chatbot  api
 
 state = 1
-# 0 idle
-# 1 initial message  printed 
-# 2 department list printed 
-# 3 one department controll type printed 
-# 4 print consultations  based on controll type
-# 5 print controll type of  a department based on consultation 
-# 6 missunderstanding while printed  departments need to check message  if it is presented in controll types key words or  in conultation key words
-# 7 
-#
-#
-#
 
 def  change_st(State : int):
     state = State;
+
+x = {
+    "message" : ""
+}
 
 @app.post("/chatbot/init/")
 async def hello_message_resp():
     print(chat_bot_json["hello_mess"])
     # change_st(1) 
-    return JSONResponse(chat_bot_json["hello_mess"])
+    x["message"] = chat_bot_json["hello_mess"]
+    print(x)
+    return JSONResponse(x)
 
 #version with after all parsing
 
@@ -62,7 +57,9 @@ async def message_resp(message : str):
         for i in chat_bot_json["info_vocab"]:
             if (message == str(i)): 
                 print(message)
-                return JSONResponse(chat_bot_json["link"])
+                x["message"] =  chat_bot_json["link"]
+                # y=json.dumps(x)
+                return JSONResponse(x)
             else:
                 print("faggot")
 
@@ -70,7 +67,9 @@ async def message_resp(message : str):
                 print("faggot")
             else :
                 print(message)
-                return JSONResponse(chat_bot_json["link"])
+                x["message"] =  chat_bot_json["link"]
+                # y=json.dumps(x)
+                return JSONResponse(x)
         for i in chat_bot_json["department_list_vocab"]:
             if (message == str(i)): 
                 print(message)
@@ -84,12 +83,16 @@ async def message_resp(message : str):
             else :
                 print(message)
                 change_st(2)
+                 # x["message"] = resp_contents[i];
+                # return JSONResponse(x)
                 return JSONResponse(chat_bot_json["department_list"])
         for i in range (1,20):
             if(message == str(resp_contents[i]["short_name"])):
                 print(message)
                 change_st(1)
-                return JSONResponse(resp_contents[i])
+                # return JSONResponse(resp_contents[i])
+                x["message"] = resp_contents[i];
+                return JSONResponse(x)
                 # TO_DO:  add  the other cases for this  term
             else :
                 print("faggot2")
@@ -98,7 +101,8 @@ async def message_resp(message : str):
                 if(message==str(i)): 
                     print(message)
                     change_st(1)
-                    return JSONResponse(resp_contents[i])
+                    x["message"] = resp_contents[i];
+                    return JSONResponse(x)
                 else:
                     print("Faggot 3 ")
                     
@@ -108,61 +112,15 @@ async def message_resp(message : str):
                 else:
                     print(message)
                     change_st(1)
-                    return JSONResponse(resp_contents[i])
+                    x["message"] = resp_contents[i];
+                    return JSONResponse(x)
                 # TO_DO:  add  the other cases for this  term
             else :
                 print(message)
                 change_st(1)
-                return JSONResponse(resp_contents[i])
+                x["message"] = resp_contents[i];
+                return JSONResponse(x)
         change_st(3)
-        return JSONResponse(chat_bot_json["department_no"])
-    return JSONResponse(chat_bot_json["department_no"])
-
-    # if state == 2: 
-    #     for i in range (1,20):
-    #         if(message == str(resp_contents[i]["short_name"])):
-    #             print(message)
-    #             change_st(1)
-    #             return JSONResponse(resp_contents[i])
-    #             # TO_DO:  add  the other cases for this  term
-    #         else :
-    #             print("faggot2")
-    #         if(message.find(resp_contents[i]["short_name"])==-1):
-    #             print("faggot2")
-    #             if(message==str(i)): 
-    #                 print(message)
-    #                 change_st(1)
-    #                 return JSONResponse(resp_contents[i])
-    #             else:
-    #                 print("Faggot 3 ")
-                    
-
-    #             if(message.find(str(i))==-1): 
-    #                 print("Faggot 3 ")
-    #             else:
-    #                 print(message)
-    #                 change_st(1)
-    #                 return JSONResponse(resp_contents[i])
-    #             # TO_DO:  add  the other cases for this  term
-    #         else :
-    #             print(message)
-    #             change_st(1)
-    #             return JSONResponse(resp_contents[i])
-    #     change_st(3)
-    #     return JSONResponse(chat_bot_json["just_select"])
-    # if state == 3: 
-    #     for i in chat_bot_json["info_vocab"]:
-    #         if (message == str(i)): 
-    #             print(message)
-    #             return JSONResponse(chat_bot_json["link"])
-    #         else:
-    #             print("faggot")
-
-    #         if(message.find(i)==-1):
-    #             print("faggot")
-    #         else :
-    #             print(message)
-    #             return JSONResponse(chat_bot_json["link"])
-    #     change_st(1) 
-    #     return JSONResponse(chat_bot_json["just_select"])
-
+        x["message"] = chat_bot_json["department_no"]
+        return JSONResponse(x)
+    return JSONResponse(x)
