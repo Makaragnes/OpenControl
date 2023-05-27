@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -30,7 +31,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -43,11 +46,16 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import coil.compose.AsyncImage
 import com.example.opencontrol.R
+import com.example.opencontrol.constants.Constants.Companion.BASE_URL
+import com.example.opencontrol.model.departments.DepartmentModel
 import com.example.opencontrol.ui.theme.DarkGrey
 import com.example.opencontrol.ui.theme.High_Priority
 import com.example.opencontrol.ui.theme.MagicColor
@@ -65,12 +73,22 @@ import com.example.opencontrol.ui.theme.achromatic_90
 import com.example.opencontrol.ui.theme.transparent_color
 import com.example.opencontrol.view.items.BottomNavigationBar
 import com.example.opencontrol.view.navigation.NavRoute
+import com.example.opencontrol.view.viewModel.LoginScreenViewModel
+import com.example.opencontrol.view.viewModel.MainViewModel
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(navController: NavController){
+
+    val mainViewModel: MainViewModel = hiltViewModel()
+
+    val list by mainViewModel.response
+
+    var state = remember {
+        mutableListOf<DepartmentModel>()
+    }
 
     val activity = LocalContext.current as Activity
     val window = activity.window
@@ -80,6 +98,10 @@ fun MainScreen(navController: NavController){
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
+
+    LaunchedEffect(Unit) {
+        mainViewModel.getDepartments()
+    }
 
     Scaffold(
         modifier = Modifier.statusBarsPadding(),
@@ -143,7 +165,7 @@ fun MainScreen(navController: NavController){
                         .clip(shape = RoundedCornerShape(16.dp, 16.dp, 16.dp, 16.dp))
                         .padding(8.dp, 8.dp, 8.dp, 8.dp),
                 ) {
-                    item {
+                    items(mainViewModel.resp) { m ->
                         Surface(
                             modifier = Modifier
                                 .padding(8.dp, 0.dp, 8.dp, 0.dp)
@@ -203,8 +225,9 @@ fun MainScreen(navController: NavController){
 //                                )
                             }
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                Image(
-                                    painter = painterResource(id = R.drawable.tradeservice),
+                                AsyncImage(
+                                    //painter = painterResource(id = R.drawable.tradeservice),
+                                    model = BASE_URL + m.link.drop(1),
                                     contentDescription = "in",
                                     modifier = Modifier
                                         .size(128.dp)
@@ -225,7 +248,7 @@ fun MainScreen(navController: NavController){
                                         modifier = Modifier
                                             //.background(transparent_color)
                                             .padding(4.dp, 8.dp, 4.dp, 4.dp),
-                                        text = "Департамент здравоохранения города ggg",
+                                        text = m.short_name,
                                         color = Color.Black,
                                         fontWeight = FontWeight.W400,
                                         fontSize = 14.sp
@@ -235,60 +258,60 @@ fun MainScreen(navController: NavController){
                         }
                     }
 
-                    item {
-                        Column(
-                            modifier = Modifier
-                                .padding(4.dp, 0.dp, 4.dp, 0.dp)
-                                .clip(shape = RoundedCornerShape(16.dp, 16.dp, 16.dp, 16.dp))
-                                .height(250.dp)
-                                .width(152.dp)
-                                .background(VeryLightGreen),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Image(
-                                painter = painterResource(id = R.drawable.housing_transformed),
-                                contentDescription = "in",
-                                modifier = Modifier
-                                    .size(128.dp)
-                                    .padding(8.dp, 8.dp, 8.dp, 8.dp)
-                                    .fillMaxWidth(),
+//                    item {
+//                        Column(
+//                            modifier = Modifier
+//                                .padding(4.dp, 0.dp, 4.dp, 0.dp)
+//                                .clip(shape = RoundedCornerShape(16.dp, 16.dp, 16.dp, 16.dp))
+//                                .height(250.dp)
+//                                .width(152.dp)
+//                                .background(VeryLightGreen),
+//                            horizontalAlignment = Alignment.CenterHorizontally
+//                        ) {
+//                            Image(
+//                                painter = painterResource(id = R.drawable.housing_transformed),
+//                                contentDescription = "in",
+//                                modifier = Modifier
+//                                    .size(128.dp)
+//                                    .padding(8.dp, 8.dp, 8.dp, 8.dp)
+//                                    .fillMaxWidth(),
+//
+//                            )
+//                            Text(
+//                                textAlign = TextAlign.Center,
+//                                modifier = Modifier.padding(8.dp, 0.dp, 8.dp, 8.dp),
+//                                text = "Государственная инспекция по контролю за использованием объектов недвижимости",
+//                                color = Color.Black,
+//                                fontWeight = FontWeight.W400,
+//                                fontSize = 14.sp
+//
+//                            )
+//                        }
+//                    }
 
-                            )
-                            Text(
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier.padding(8.dp, 0.dp, 8.dp, 8.dp),
-                                text = "Государственная инспекция по контролю за использованием объектов недвижимости",
-                                color = Color.Black,
-                                fontWeight = FontWeight.W400,
-                                fontSize = 14.sp
-
-                            )
-                        }
-                    }
-
-                    item {
-                        Column(
-                            modifier = Modifier
-                                .padding(8.dp, 0.dp, 8.dp, 0.dp)
-                                .clip(shape = RoundedCornerShape(16.dp, 16.dp, 16.dp, 16.dp))
-                                .height(242.dp)
-                                .width(160.dp)
-                                .background(achromatic_100)
-                        ) {
-                            Image(
-                                painter = painterResource(id = R.drawable.hels),
-                                contentDescription = "in",
-                                modifier = Modifier
-                                    .padding(8.dp, 8.dp, 8.dp, 8.dp)
-                                    .fillMaxWidth()
-                            )
-                            Text(
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier.padding(8.dp, 0.dp, 8.dp, 8.dp),
-                                text = "Департамент здравоохранения"
-                            )
-                        }
-                    }
+//                    item {
+//                        Column(
+//                            modifier = Modifier
+//                                .padding(8.dp, 0.dp, 8.dp, 0.dp)
+//                                .clip(shape = RoundedCornerShape(16.dp, 16.dp, 16.dp, 16.dp))
+//                                .height(242.dp)
+//                                .width(160.dp)
+//                                .background(achromatic_100)
+//                        ) {
+//                            Image(
+//                                painter = painterResource(id = R.drawable.hels),
+//                                contentDescription = "in",
+//                                modifier = Modifier
+//                                    .padding(8.dp, 8.dp, 8.dp, 8.dp)
+//                                    .fillMaxWidth()
+//                            )
+//                            Text(
+//                                textAlign = TextAlign.Center,
+//                                modifier = Modifier.padding(8.dp, 0.dp, 8.dp, 8.dp),
+//                                text = "Департамент здравоохранения"
+//                            )
+//                        }
+//                    }
                 }
 
             Row(

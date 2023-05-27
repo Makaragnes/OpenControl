@@ -13,3 +13,7 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 def deps():
     return JSONResponse(file_contents)
 
+@app.get("/")
+async def homepage():
+    return JSONResponse({'message': 'world'})
+

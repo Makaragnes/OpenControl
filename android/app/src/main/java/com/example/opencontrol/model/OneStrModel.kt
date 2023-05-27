@@ -1,3 +1,5 @@
 package com.example.opencontrol.model
 
-data class OneStrModel()
+data class OneStrModel(
+    val message: String
+)

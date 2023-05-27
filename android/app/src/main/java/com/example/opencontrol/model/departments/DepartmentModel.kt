@@ -1,6 +1,6 @@
 package com.example.opencontrol.model.departments
 
-data class Department(
+data class DepartmentModel(
     val num: Int,
     val link: String,
     val department: String,

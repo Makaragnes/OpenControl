@@ -7,6 +7,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.opencontrol.model.OneStrModel
 import com.example.opencontrol.model.example.DogResponse
 import com.example.opencontrol.repository.MainRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,15 +22,23 @@ class LoginScreenViewModel @Inject constructor(
 
     var response: MutableState<DogResponse?> = mutableStateOf(null)
 
+    var resp: MutableState<OneStrModel?> = mutableStateOf(null)
+
     private var _movieResponse = MutableLiveData<Response<DogResponse>>()
     val movieResponse: LiveData<Response<DogResponse>> = _movieResponse
 
     val availableServer = mutableStateOf(true)
 
-    fun getData() {
+    fun getHome() {
         viewModelScope.launch {
-            _movieResponse.postValue(mainRepository.mF())
-            response.value = mainRepository.mF().body()
+            resp.value = mainRepository.getHome().body()
         }
     }
+
+//    fun getData() {
+//        viewModelScope.launch {
+//            _movieResponse.postValue(mainRepository.mF())
+//            response.value = mainRepository.mF().body()
+//        }
+//    }
 }

@@ -1,12 +1,13 @@
 package com.example.opencontrol.network
 
-import com.example.opencontrol.DogService
 import com.example.opencontrol.constants.Constants.Companion.BASE_URL
+import com.example.opencontrol.service.DepartmentService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
@@ -15,13 +16,16 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
+
+    private val logger = HttpLoggingInterceptor()
     @Singleton
     @Provides
     fun provideHttpClient(): OkHttpClient {
         return OkHttpClient
             .Builder()
-            .readTimeout(15, TimeUnit.SECONDS)
-            .connectTimeout(15, TimeUnit.SECONDS)
+            .addInterceptor(logger.setLevel(HttpLoggingInterceptor.Level.HEADERS))
+            .readTimeout(20, TimeUnit.DAYS)
+            .connectTimeout(20, TimeUnit.DAYS)
             .build()
     }
 
@@ -45,6 +49,6 @@ object NetworkModule {
 
     @Singleton
     @Provides
-    fun provideCurrencyService(retrofit: Retrofit): DogService =
-        retrofit.create(DogService::class.java)
+    fun provideCurrencyService(retrofit: Retrofit): DepartmentService =
+        retrofit.create(DepartmentService::class.java)
 }

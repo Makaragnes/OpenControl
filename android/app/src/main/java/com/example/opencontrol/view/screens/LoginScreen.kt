@@ -18,20 +18,15 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.DarkGray
 import androidx.compose.ui.graphics.toArgb
@@ -42,22 +37,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.opencontrol.ui.theme.OpenControlTheme
 import androidx.navigation.compose.rememberNavController
-import com.example.opencontrol.DogService
 import com.example.opencontrol.R
-import com.example.opencontrol.repository.MainRepository
-import com.example.opencontrol.ui.theme.BeforeWhite
 import com.example.opencontrol.ui.theme.Black
-import com.example.opencontrol.ui.theme.LightGray
 import com.example.opencontrol.ui.theme.MagicColor
-import com.example.opencontrol.ui.theme.Purple80
 import com.example.opencontrol.ui.theme.Rose
-import com.example.opencontrol.ui.theme.VeryLightGray
-import com.example.opencontrol.ui.theme.VeryLightGreen
 import com.example.opencontrol.ui.theme.VeryVeryLightGreen
 import com.example.opencontrol.ui.theme.bigIndent
 import com.example.opencontrol.ui.theme.normalLabelText
@@ -65,9 +51,6 @@ import com.example.opencontrol.ui.theme.standardIndent
 import com.example.opencontrol.ui.theme.transparent_color
 import com.example.opencontrol.view.navigation.NavRoute
 import com.example.opencontrol.view.viewModel.LoginScreenViewModel
-
-import java.time.format.TextStyle
-import kotlin.math.log
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -86,10 +69,11 @@ fun LoginScreen(navController: NavController) {
 
     val state by loginScreenViewModel.response
     LaunchedEffect(Unit) {
-        loginScreenViewModel.getData()
+        loginScreenViewModel.getHome()
+        //loginScreenViewModel.getData()
     }
 
-    Log.d("TAG", loginScreenViewModel.movieResponse.value?.message().toString())
+    Log.d("TAG", loginScreenViewModel.resp.value?.message.toString()            )
 
     var loginText by remember { mutableStateOf("") }
     var passwordText by remember { mutableStateOf("") }
