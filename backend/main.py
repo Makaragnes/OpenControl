@@ -2,133 +2,167 @@ from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
 from fastapi.staticfiles import StaticFiles
+
+
 import json
 app = FastAPI()
+#preparation  ds  part
 with open('./jsons/deps.json') as user_file:
     file_contents = json.load(user_file)
-print(file_contents)
-# resp_cont[19]
+
+with open('./jsons/chat_bot.json') as user_file:
+    chat_bot_json = json.load(user_file)
+
 with open('./jsons/1.json') as user_file:
     resp_contents = json.load(user_file)
-with open('./jsons/1.json') as user_file:
-    resp_contents[1] = json.load(user_file)
-with open('./jsons/2.json') as user_file:
-    resp_contents[2] = json.load(user_file)
-with open('./jsons/3.json') as user_file:
-    resp_contents[3] = json.load(user_file)
-with open('./jsons/4.json') as user_file:
-    resp_contents[4] = json.load(user_file)
-with open('./jsons/5.json') as user_file:
-    resp_contents[5] = json.load(user_file)
-with open('./jsons/6.json') as user_file:
-    resp_contents[6] = json.load(user_file)
-with open('./jsons/7.json') as user_file:
-    resp_contents[7] = json.load(user_file)
-with open('./jsons/8.json') as user_file:
-    resp_contents[8] = json.load(user_file)
-with open('./jsons/9.json') as user_file:
-    resp_contents[9] = json.load(user_file)
-with open('./jsons/10.json') as user_file:
-    resp_contents[10] = json.load(user_file)
-with open('./jsons/11.json') as user_file:
-    resp_contents[11] = json.load(user_file)
-with open('./jsons/12.json') as user_file:
-    resp_contents[12] = json.load(user_file)
-with open('./jsons/13.json') as user_file:
-    resp_contents[13] = json.load(user_file)
-with open('./jsons/14.json') as user_file:
-    resp_contents[14] = json.load(user_file)
-with open('./jsons/15.json') as user_file:
-    resp_contents[15] = json.load(user_file)
-with open('./jsons/16.json') as user_file:
-    resp_contents[16] = json.load(user_file)
-with open('./jsons/17.json') as user_file:
-    resp_contents[17] = json.load(user_file)
-with open('./jsons/18.json') as user_file:
-    resp_contents[18] = json.load(user_file)
-with open('./jsons/19.json') as user_file:
-    resp_contents[19] = json.load(user_file)
 
-# for i in range(1,19):
-#     with open('./jsons/' + str(i) + '.json') as user_file:
-#         resp_cont[i] = json.load(user_file)
-
-
+for i in range(1,20):
+    with open('./jsons/' + str(i) + '.json') as user_file:
+        resp_contents[i] = json.load(user_file)
+#end preparation ds  part
 app.mount("/static", StaticFiles(directory="static"), name="static")
 @app.post("/deps/")
-def deps():
+async def deps():
     return JSONResponse(file_contents)
-###  shitty stile  of  consumming  all of  posts , 
-### TO_DO: replace  this  shitt  with  normal post  parameter    
-@app.post("/deps/1")
-def deps():
-    return JSONResponse(resp_contents[1])
-@app.post("/deps/2")
-def deps():
-    return JSONResponse(resp_contents[2])
-@app.post("/deps/3")
-def deps():
-    return JSONResponse(resp_contents[3])
-@app.post("/deps/4")
-def deps():
-    return JSONResponse(resp_contents[4])
-@app.post("/deps/5")
-def deps():
-    return JSONResponse(resp_contents[5])
 
-@app.post("/deps/6")
-def deps():
-    return JSONResponse(resp_contents[6])
+@app.post("/deps/{item_id}")
+async def create_item( item_id: int):
+    return JSONResponse(resp_contents[item_id])
 
-@app.post("/deps/7")
-def deps():
-    return JSONResponse(resp_contents[7])
+#part  of the  chatbot  api
 
-@app.post("/deps/8")
-def deps():
-    return JSONResponse(resp_contents[8])
+state = 1
+# 0 idle
+# 1 initial message  printed 
+# 2 department list printed 
+# 3 one department controll type printed 
+# 4 print consultations  based on controll type
+# 5 print controll type of  a department based on consultation 
+# 6 missunderstanding while printed  departments need to check message  if it is presented in controll types key words or  in conultation key words
+# 7 
+#
+#
+#
 
-@app.post("/deps/9")
-def deps():
-    return JSONResponse(resp_contents[9])
+def  change_st(State : int):
+    state = State;
 
-@app.post("/deps/10")
-def deps():
-    return JSONResponse(resp_contents[10])
+@app.post("/chatbot/init/")
+async def hello_message_resp():
+    print(chat_bot_json["hello_mess"])
+    # change_st(1) 
+    return JSONResponse(chat_bot_json["hello_mess"])
 
-@app.post("/deps/11")
-def deps():
-    return JSONResponse(resp_contents[11])
+#version with after all parsing
 
-@app.post("/deps/12")
-def deps():
-    return JSONResponse(resp_contents[12])
 
-@app.post("/deps/13")
-def deps():
-    return JSONResponse(resp_contents[13])
+@app.post("/chatbot/{message}")
+async def message_resp(message : str):
+    if state==1 :
+        for i in chat_bot_json["info_vocab"]:
+            if (message == str(i)): 
+                print(message)
+                return JSONResponse(chat_bot_json["link"])
+            else:
+                print("faggot")
 
-@app.post("/deps/14")
-def deps():
-    return JSONResponse(resp_contents[14])
+            if(message.find(i)==-1):
+                print("faggot")
+            else :
+                print(message)
+                return JSONResponse(chat_bot_json["link"])
+        for i in chat_bot_json["department_list_vocab"]:
+            if (message == str(i)): 
+                print(message)
+                return JSONResponse(chat_bot_json["department_list"])
+            else:
+                print("faggot")
 
-@app.post("/deps/15")
-def deps():
-    return JSONResponse(resp_contents[15])
+            if(message.find(i)==-1):
+                print("faggot")
+                # TO_DO:  add  the other cases for this  term
+            else :
+                print(message)
+                change_st(2)
+                return JSONResponse(chat_bot_json["department_list"])
+        for i in range (1,20):
+            if(message == str(resp_contents[i]["short_name"])):
+                print(message)
+                change_st(1)
+                return JSONResponse(resp_contents[i])
+                # TO_DO:  add  the other cases for this  term
+            else :
+                print("faggot2")
+            if(message.find(resp_contents[i]["short_name"])==-1):
+                print("faggot2")
+                if(message==str(i)): 
+                    print(message)
+                    change_st(1)
+                    return JSONResponse(resp_contents[i])
+                else:
+                    print("Faggot 3 ")
+                    
 
-@app.post("/deps/16")
-def deps():
-    return JSONResponse(resp_contents[16])
+                if(message.find(str(i))==-1): 
+                    print("Faggot 3 ")
+                else:
+                    print(message)
+                    change_st(1)
+                    return JSONResponse(resp_contents[i])
+                # TO_DO:  add  the other cases for this  term
+            else :
+                print(message)
+                change_st(1)
+                return JSONResponse(resp_contents[i])
+        change_st(3)
+        return JSONResponse(chat_bot_json["department_no"])
+    return JSONResponse(chat_bot_json["department_no"])
 
-@app.post("/deps/17")
-def deps():
-    return JSONResponse(resp_contents[17])
+    # if state == 2: 
+    #     for i in range (1,20):
+    #         if(message == str(resp_contents[i]["short_name"])):
+    #             print(message)
+    #             change_st(1)
+    #             return JSONResponse(resp_contents[i])
+    #             # TO_DO:  add  the other cases for this  term
+    #         else :
+    #             print("faggot2")
+    #         if(message.find(resp_contents[i]["short_name"])==-1):
+    #             print("faggot2")
+    #             if(message==str(i)): 
+    #                 print(message)
+    #                 change_st(1)
+    #                 return JSONResponse(resp_contents[i])
+    #             else:
+    #                 print("Faggot 3 ")
+                    
 
-@app.post("/deps/18")
-def deps():
-    return JSONResponse(resp_contents[18])
+    #             if(message.find(str(i))==-1): 
+    #                 print("Faggot 3 ")
+    #             else:
+    #                 print(message)
+    #                 change_st(1)
+    #                 return JSONResponse(resp_contents[i])
+    #             # TO_DO:  add  the other cases for this  term
+    #         else :
+    #             print(message)
+    #             change_st(1)
+    #             return JSONResponse(resp_contents[i])
+    #     change_st(3)
+    #     return JSONResponse(chat_bot_json["just_select"])
+    # if state == 3: 
+    #     for i in chat_bot_json["info_vocab"]:
+    #         if (message == str(i)): 
+    #             print(message)
+    #             return JSONResponse(chat_bot_json["link"])
+    #         else:
+    #             print("faggot")
 
-@app.post("/deps/19")
-def deps():
-    return JSONResponse(resp_contents[19])
+    #         if(message.find(i)==-1):
+    #             print("faggot")
+    #         else :
+    #             print(message)
+    #             return JSONResponse(chat_bot_json["link"])
+    #     change_st(1) 
+    #     return JSONResponse(chat_bot_json["just_select"])
 
