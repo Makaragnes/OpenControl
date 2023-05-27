@@ -2,11 +2,16 @@ from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
 from fastapi.staticfiles import StaticFiles
-
+from pydantic import BaseModel
 
 import json
 app = FastAPI()
 #preparation  ds  part
+class Item(BaseModel) :
+    message : str
+class Item_Id(BaseModel) :
+    item_id: int
+
 with open('./jsons/deps.json') as user_file:
     file_contents = json.load(user_file)
 
@@ -25,9 +30,9 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 async def deps():
     return JSONResponse(file_contents)
 
-@app.post("/deps/{item_id}")
-async def create_item( item_id: int):
-    return JSONResponse(resp_contents[item_id])
+@app.post("/deps/single/")
+async def create_item( item: Item_Id):
+    return JSONResponse(resp_contents[item.item_id])
 
 #part  of the  chatbot  api
 
@@ -39,6 +44,8 @@ def  change_st(State : int):
 x = {
     "message" : ""
 }
+
+
 
 @app.post("/chatbot/init/")
 async def hello_message_resp():
@@ -52,7 +59,8 @@ async def hello_message_resp():
 
 
 @app.post("/chatbot/{message}")
-async def message_resp(message : str):
+async def message_resp(item : Item):
+    message = item.message
     if state==1 :
         for i in chat_bot_json["info_vocab"]:
             if (message == str(i)): 
