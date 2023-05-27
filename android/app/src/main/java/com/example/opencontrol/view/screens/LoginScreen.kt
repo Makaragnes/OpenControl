@@ -1,6 +1,7 @@
 package com.example.opencontrol.view.screens
 
 import android.app.Activity
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -40,10 +41,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.opencontrol.ui.theme.OpenControlTheme
 import androidx.navigation.compose.rememberNavController
+import com.example.opencontrol.DogService
 import com.example.opencontrol.R
+import com.example.opencontrol.repository.MainRepository
 import com.example.opencontrol.ui.theme.BeforeWhite
 import com.example.opencontrol.ui.theme.Black
 import com.example.opencontrol.ui.theme.LightGray
@@ -68,7 +74,9 @@ import kotlin.math.log
 @Composable
 fun LoginScreen(navController: NavController) {
 
-    val loginScreenViewModel = LoginScreenViewModel()
+    //val loginScreenViewModel: LoginScreenViewModel by viewModel()
+    val loginScreenViewModel: LoginScreenViewModel = hiltViewModel()
+    //val loginScreenViewModel = LoginScreenViewModel(MainRepository(DogService()))
 
     val activity = LocalContext.current as Activity
     val window = activity.window
@@ -76,10 +84,12 @@ fun LoginScreen(navController: NavController) {
     window.statusBarColor = Rose.toArgb()
     window.navigationBarColor = transparent_color.toArgb()
 
-
+    val state by loginScreenViewModel.response
     LaunchedEffect(Unit) {
-
+        loginScreenViewModel.getData()
     }
+
+    Log.d("TAG", loginScreenViewModel.movieResponse.value?.message().toString())
 
     var loginText by remember { mutableStateOf("") }
     var passwordText by remember { mutableStateOf("") }
