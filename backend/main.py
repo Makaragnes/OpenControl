@@ -3,82 +3,125 @@ from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
-
+from fastapi.encoders import jsonable_encoder
 import json
+from json import JSONEncoder
 app = FastAPI()
 #preparation  ds  part
 class Item(BaseModel) :
     message : str
 class Item_Id(BaseModel) :
     item_id: int
-# class Personinfo(BaseModel) :
-#     personID: 0
-#     full_name: ""
-#     phone: ""
-#     email: ""
-    # birthday = {
-    #     "day": 0,
-    #     "month": "",
-    #     "year": 0
-    # }
-    # address = {
-    #     "postIndex": 0,
-    #     "country": "",
-    #     "city": "",
-    #     "street": "",
-    #     "house": "",
-    #     "flat": ""
-    # }
-    # passport = {
-    #     "number": 0,
-    #     "series": 0
-    # }
+class Personinfo(BaseModel) :
+    personID: int
+    full_name: str
+    phone: str
+    email: str
+    birthday = {
+        "day": 0,
+        "month": "",
+        "year": 0
+    }
+    address = {
+        "postIndex": 0,
+        "country": "",
+        "city": "",
+        "street": "",
+        "house": "",
+        "flat": ""
+    }
+    passport = {
+        "number": 0,
+        "series": 0
+    }
+class Businessinfo(BaseModel) :
+    OGRN : int
+    fullTitle: str
+    INN: int
+    establishedCapital: str
+    infoAboutActivity: str
+    additionalActivity: str
+    nameOfTaxService: str
+    shortTitle: str
+    dataUGRUL = {
+        "day": 0,
+        "month": "",
+        "year": 0
+    }
+    businessLocation = {
+        "postIndex": 0,
+        "country": "",
+        "city": "",
+        "street": "",
+        "house": "",
+        "flat": ""
+    }
+    taxLocation = {
+        "postIndex": 0,
+        "country": "",
+        "sity": "",
+        "streat": "",
+        "house": "",
+        "flat": ""
+    }
+class BusinessEncoder(json.JSONEncoder):
+    def default(self, o):
+            return o.__dict__
+class PersonEncoder(json.JSONEncoder):
+    def default(self, o):
+            return o.__dict__
+
+######################
+######################
+############# initial read
+try:
+    with open('./jsons/businessInfo.json') as user_file:
+        business_inf = json.load(user_file)
+finally:
+    user_file.close()
+try:
+    with open('./jsons/personInfo.json') as user_file:
+        person_inf = json.load(user_file)
+finally:
+    user_file.close()
 
 
-# class Businessinfo(BaseModel) :
-#     OGRN : 0,
-#     "fullTitle": "",
-#     "INN": 0,
-#     "establishedCapital": "",
-#     "infoAboutActivity": "",
-#     "additionalActivity": ""
-#     "dataUGRUL": {
-#         "day": 0,
-#         "month": "",
-#         "year": 0
-#     },
-#     "shortTitle": "",
-#     "businessLocation": {
-#         "postIndex": 0,
-#         "country": "",
-#         "city": "",
-#         "street": "",
-#         "house": "",
-#         "flat": ""
-#     },
-#     "nameOfTaxService": "",
-#     "taxLocation": {
-#         "postIndex": 0,
-#         "country": "",
-#         "sity": "",
-#         "streat": "",
-#         "house": "",
-#         "flat": ""
-#     },
+try:
+    with open('./jsons/deps.json') as user_file:
+        file_contents = json.load(user_file)
+finally:
+    user_file.close()
 
-with open('./jsons/deps.json') as user_file:
-    file_contents = json.load(user_file)
 
-with open('./jsons/chat_bot.json') as user_file:
-    chat_bot_json = json.load(user_file)
+try:
+    with open('./jsons/chat_bot.json') as user_file:
+        chat_bot_json = json.load(user_file)
+finally:
+    user_file.close()
 
-with open('./jsons/1.json') as user_file:
-    resp_contents = json.load(user_file)
 
+try:
+    with open('./jsons/1.json') as user_file:
+        resp_contents = json.load(user_file)
+finally:
+    user_file.close()
 for i in range(1,20):
-    with open('./jsons/' + str(i) + '.json') as user_file:
-        resp_contents[i] = json.load(user_file)
+    try:
+        with open('./jsons/' + str(i) + '.json') as user_file:
+            resp_contents[i] = json.load(user_file)
+    finally:
+        user_file.close()
 #end preparation ds  part
+#########################
+#########################
+#
+#
+#
+##########################
+##########################
+##################fapi part
+
+
 app.mount("/static", StaticFiles(directory="static"), name="static")
 @app.post("/deps/")
 async def deps():
@@ -87,6 +130,48 @@ async def deps():
 @app.post("/deps/single/")
 async def create_item( item: Item_Id):
     return JSONResponse(resp_contents[item.item_id])
+
+@app.post("/profile/person/init/")
+async def init_personal():
+    try:
+        with open('./jsons/personInfo.json') as user_file:
+            person_inf = json.load(user_file)
+    finally:
+        user_file.close()
+        return JSONResponse(person_inf)
+
+@app.post("/profile/business/init/")
+async def init_business():
+    try:
+        with open('./jsons/businessInfo.json') as user_file:
+            business_inf = json.load(user_file)
+    finally:
+        user_file.close()
+        return JSONResponse(business_inf)
+
+
+
+
+
+@app.post("/profile/person/")
+async def init_personal(person_info : Personinfo):
+    try:
+        with open('./jsons/personInfo.json', 'w') as user_file:
+            user_file.write(json.dumps(person_info, cls=PersonEncoder))
+            person_inf = person_info
+    finally:
+        return JSONResponse(jsonable_encoder(person_info))
+
+
+@app.post("/profile/business/")
+async def init_business(business_info : Businessinfo):
+    try:
+        with open('./jsons/businessInfo.json', 'w') as user_file:
+            user_file.write(json.dumps(business_info,cls=BusinessEncoder))
+            business_inf = business_info
+    finally:
+        user_file.close()
+        return JSONResponse(jsonable_encoder(business_info))
 
 #part  of the  chatbot  api
 

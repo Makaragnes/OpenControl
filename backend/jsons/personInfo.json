@@ -1,0 +1,22 @@
+{
+    "personeID": 0,
+    "full_name": "",
+    "phone": "",
+    "email": "",
+    "birthday": {
+        "day": 0,
+        "month": "",
+        "year": 0
+    },
+    "address": {
+        "country": "",
+        "sity": "",
+        "streat": "",
+        "house": "",
+        "flat": ""
+    },
+    "pasport": {
+        "number": 0,
+        "series": 0
+    }
+}
