@@ -38,7 +38,7 @@ class SignalingClient {
   private val client = OkHttpClient()
   private val request = Request
     .Builder()
-    .url("https://192.168.244.47:8080")
+    .url("ws://192.168.233.47:8080/rtc")
           //HERE
     //.url(BuildConfig.SIGNALING_SERVER_IP_ADDRESS)
     .build()

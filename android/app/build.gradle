@@ -20,7 +20,21 @@ android {
         vectorDrawables {
             useSupportLibrary true
         }
+
+//        buildConfigField(
+//            "String",
+//            "SIGNALING_SERVER_IP_ADDRESS",
+//            "\"" + gradleLocalProperties(rootDir).getProperty("SIGNALING_SERVER_IP_ADDRESS", "ws://192.168.0.11:8080/rtc") + "\""
+//    )
     }
+
+    packagingOptions {
+        resources {
+            excludes.add("/META-INF/{AL2.0,LGPL2.1}")
+        }
+    }
+
+
 
     buildTypes {
         release {
