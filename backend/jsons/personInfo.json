@@ -1,1 +1,22 @@
-{"personID": 0, "full_name": "dfg", "phone": "", "email": "", "birthday": {"day": "", "month": "", "year": ""}, "address": {"city": "", "country": "", "flat": "", "house": "", "postIndex": "", "street": ""}, "passport": {"number": "", "series": ""}}
+{
+    "personeID": "",
+    "full_name": "",
+    "phone": "",
+    "email": "",
+    "birthday": {
+        "day": "",
+        "month": "",
+        "year": ""
+    },
+    "address": {
+        "country": "",
+        "sity": "",
+        "streat": "",
+        "house": "",
+        "flat": ""
+    },
+    "pasport": {
+        "number": "",
+        "series": ""
+    }
+}

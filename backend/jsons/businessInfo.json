@@ -1,1 +1,31 @@
-{"OGRN": "", "fullTitle": "", "INN": "", "establishedCapital": "", "infoAboutActivity": "", "additionalActivity": "", "nameOfTaxService": "", "shortTitle": "", "dataUGRUL": {"day": "", "month": "", "year": ""}, "businessLocation": {"city": "", "country": "", "flat": "", "house": "", "postIndex": "", "street": ""}, "taxLocation": {"city": "", "country": "", "flat": "", "house": "", "postIndex": "", "street": ""}}
+{
+    "OGRN": "",
+    "fullTitle": "",
+    "dataUGRUL": {
+        "day": "",
+        "month": "",
+        "year": ""
+    },
+    "shortTitle": "",
+    "businessLocation": {
+        "postIndex": "",
+        "country": "",
+        "sity": "",
+        "streat": "",
+        "house": "",
+        "flat": ""
+    },
+    "nameOfTaxService": "",
+    "taxLocation": {
+        "postIndex": "",
+        "country": "",
+        "sity": "",
+        "streat": "",
+        "house": "",
+        "flat": ""
+    },
+    "INN": "",
+    "estableshedCapital": "",
+    "infoAboutActyvity": "",
+    "aditionelActivity": ""
+}

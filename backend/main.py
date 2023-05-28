@@ -2,12 +2,10 @@ from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
 from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel
 from fastapi.encoders import jsonable_encoder
+from pydantic import BaseModel
 import json
 from json import JSONEncoder
-import sys
-import importlib
 
 
 app = FastAPI()
@@ -336,11 +334,6 @@ async def init_calenda(day : Day):
             # user_file.write(json.dumps(business_info,cls=BusinessEncoder))
     finally:
         user_file.close()
-    # for i in range(0,3):
-    #     if (int(calend_inf["month"][i]["num"]) == calenda_info.month):
-    #         for j in calend_inf["month"][i]["day"]:
-    #             if (calenda_info.day == j["day_num"]):
-    #                 return(JSONResponse(jsonable_encoder(j["time"])))
 
 ##########################
 ##########################
