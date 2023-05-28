@@ -7,8 +7,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.opencontrol.model.AuthModel
 import com.example.opencontrol.model.OneStrModel
 import com.example.opencontrol.model.example.DogResponse
+import com.example.opencontrol.obj.DataObj
+import com.example.opencontrol.repository.AuthRepository
 import com.example.opencontrol.repository.MainRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -17,7 +20,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoginScreenViewModel @Inject constructor(
-    private val mainRepository: MainRepository
+    private val mainRepository: MainRepository,
+    private val authRepository: AuthRepository
 ): ViewModel() {
 
     var response: MutableState<DogResponse?> = mutableStateOf(null)
@@ -29,6 +33,9 @@ class LoginScreenViewModel @Inject constructor(
 
     val availableServer = mutableStateOf(false)
 
+    val login = mutableStateOf("")
+    val password = mutableStateOf("")
+
     fun getHome() {
         viewModelScope.launch {
             try {
@@ -38,6 +45,24 @@ class LoginScreenViewModel @Inject constructor(
                 e.stackTrace
             }
         }
+    }
+
+    suspend fun auth(){
+        DataObj.auth.value = authRepository.auth(AuthModel(
+            login.value,
+            password.value,
+            0
+        )).body()
+        Log.d("QWER", DataObj.auth.value?.id.toString())
+    }
+
+    suspend fun validate(){
+        DataObj.auth.value = authRepository.validate(AuthModel(
+            login.value,
+            password.value,
+            0
+        )).body()
+        Log.d("QWER", DataObj.auth.value?.id.toString())
     }
 
 //    fun getData() {

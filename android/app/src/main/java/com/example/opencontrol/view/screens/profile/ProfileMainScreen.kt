@@ -28,10 +28,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -64,13 +66,13 @@ import com.example.opencontrol.view.screens.profile.profileItems.RowWithEditText
 import com.example.opencontrol.view.screens.profile.profileItems.RowWithText
 import com.example.opencontrol.view.viewModel.MainViewModel
 import com.example.opencontrol.view.viewModel.ProfileViewModel
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun ProfileMainScreen(navController: NavController) {
 
-    //val profileViewModel: ProfileViewModel = hiltViewModel()
     val profileViewModel: ProfileViewModel = hiltViewModel()
 
     val activity = LocalContext.current as Activity
@@ -79,12 +81,18 @@ fun ProfileMainScreen(navController: NavController) {
     window.statusBarColor = Rose.toArgb()
     window.navigationBarColor = Rose.toArgb()
 
+    val coroutineScope = rememberCoroutineScope()
+
     val text = remember { mutableStateOf("") }
 
 //    val listOFFields = remember {
 //        mutableListOf<RowProfileModel>()
 //    }
 
+    LaunchedEffect(UInt){
+        profileViewModel.getBusinessInfo()
+        profileViewModel.getPersonInfo()
+    }
 
 
     //val enabledFields by rememberSaveable { mutableStateOf(false) }
@@ -208,7 +216,13 @@ fun ProfileMainScreen(navController: NavController) {
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Button(
-                            onClick = { enabledField.value = false }) {
+                            onClick = {
+                                enabledField.value = false
+                                coroutineScope.launch {
+                                    profileViewModel.pushPersonInfo()
+                                    profileViewModel.pushBusinessInfo()
+                                }
+                            }) {
                             Column(
                                 horizontalAlignment = Alignment.CenterHorizontally,
                                 verticalArrangement = Arrangement.Center

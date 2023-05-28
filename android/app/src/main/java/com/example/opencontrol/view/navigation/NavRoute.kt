@@ -9,6 +9,8 @@ import com.example.opencontrol.view.screens.MainScreen
 import com.example.opencontrol.view.screens.chat.ChatMainScreen
 import com.example.opencontrol.view.screens.consultation.ConsultationMainScreen
 import com.example.opencontrol.view.screens.consultation.VeryConsultationScreen
+import com.example.opencontrol.view.screens.consultation.WebRtcScreen
+import com.example.opencontrol.view.screens.departments.CalendarScreen
 import com.example.opencontrol.view.screens.departments.DepartmentMainScreen
 import com.example.opencontrol.view.screens.inspection.InspectionMainScreen
 import com.example.opencontrol.view.screens.profile.ProfileMainScreen
@@ -30,12 +32,15 @@ sealed class NavRoute(val route: String) {
 
     // Department screens
     object DepartmentMainScreen: NavRoute("DepartmentMainScreen")
+    object CalendarScreen: NavRoute("CalendarScreen")
 
     // Video call screens
     object VideoCallScreen: NavRoute("VideoCallScreen.kt")
 
     // Chat screens
     object ChatMainScreen: NavRoute("ChatMainScreen")
+
+    object WebRtcScreen: NavRoute("WebRtcScreen")
 }
 
 @Composable
@@ -70,5 +75,12 @@ fun OpenControlNavHost() {
         composable(NavRoute.ChatMainScreen.route) {
             ChatMainScreen(navController = navController)
         }
+        composable(NavRoute.CalendarScreen.route) {
+            CalendarScreen(navController = navController)
+        }
+        composable(NavRoute.WebRtcScreen.route) {
+            WebRtcScreen(navController = navController)
+        }
+
     }
 }

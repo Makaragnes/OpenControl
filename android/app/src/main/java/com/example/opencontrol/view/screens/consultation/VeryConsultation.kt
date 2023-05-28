@@ -45,6 +45,7 @@ import com.example.opencontrol.ui.theme.Rose
 import com.example.opencontrol.ui.theme.VeryLightGreen
 import com.example.opencontrol.ui.theme.transparent_color
 import com.example.opencontrol.view.items.TransientTopBar
+import com.example.opencontrol.view.navigation.NavRoute
 import com.example.opencontrol.view.screens.LoginScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -225,9 +226,10 @@ fun VeryConsultationScreen(navController: NavController){
                                 containerColor = MainGreen
                             ),
                             onClick = {
-                                val intent = Intent(context, CallActivity::class.java)
-                                intent.putExtra("username", "asdf")
-                                context.startActivity(intent)
+//                                val intent = Intent(context, CallActivity::class.java)
+//                                intent.putExtra("username", "asdf")
+//                                context.startActivity(intent)
+                                navController.navigate(NavRoute.WebRtcScreen.route)
                             }) {
                             Text(
                                 //modifier = Modifier.padding(8.dp, 8.dp, 0.dp, 8.dp),

@@ -1,9 +1,11 @@
 package com.example.opencontrol.view.viewModel.chatbot
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import com.example.opencontrol.model.OneStrModel
 import com.example.opencontrol.model.chatbot.MessageItem
 import com.example.opencontrol.model.webrtcModels.MessageModel
 import com.example.opencontrol.repository.ChatBotRepository
@@ -20,6 +22,7 @@ class ChatBotViewModel @Inject constructor(
     //private var listOfMessage = ArrayList<MessageItem>()
     @SuppressLint("MutableCollectionMutableState")
     var somelist = mutableStateListOf<MessageItem>()
+    val returnMessage = mutableStateOf<OneStrModel>(OneStrModel(""))
 
     suspend fun getInit(){
         somelist.add(
@@ -28,8 +31,12 @@ class ChatBotViewModel @Inject constructor(
                 "sdf",
                 true
                 )
-
         )
+    }
+
+    suspend fun sendMessage(){
+        returnMessage.value = OneStrModel(chatBotRepository.sendMessage().body()!!.message)
+        Log.d("HHH", returnMessage.value.message)
     }
 
 }

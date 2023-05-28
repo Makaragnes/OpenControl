@@ -57,6 +57,7 @@ import coil.compose.AsyncImage
 import com.example.opencontrol.R
 import com.example.opencontrol.constants.Constants.Companion.BASE_URL
 import com.example.opencontrol.model.departments.DepartmentModel
+import com.example.opencontrol.obj.DataObj
 import com.example.opencontrol.ui.theme.DarkGrey
 import com.example.opencontrol.ui.theme.High_Priority
 import com.example.opencontrol.ui.theme.MagicColor
@@ -84,12 +85,6 @@ import com.example.opencontrol.view.viewModel.MainViewModel
 fun MainScreen(navController: NavController){
 
     val mainViewModel: MainViewModel = hiltViewModel()
-
-    val list by mainViewModel.response
-
-    var state = remember {
-        mutableListOf<DepartmentModel>()
-    }
 
     val activity = LocalContext.current as Activity
     val window = activity.window
@@ -174,7 +169,10 @@ fun MainScreen(navController: NavController){
                             modifier = Modifier
                                 .padding(8.dp, 0.dp, 8.dp, 0.dp)
                                 .clip(shape = RoundedCornerShape(16.dp, 16.dp, 16.dp, 16.dp))
-                                .clickable { navController.navigate(NavRoute.DepartmentMainScreen.route) }
+                                .clickable {
+                                    navController.navigate(NavRoute.DepartmentMainScreen.route)
+                                    DataObj.departmentNumber.value = m.num
+                                }
                                 .height(250.dp)
                                 .width(152.dp)
                                 .border(

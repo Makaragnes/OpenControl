@@ -32,6 +32,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -50,6 +51,7 @@ import androidx.navigation.NavController
 import com.example.opencontrol.R
 import com.example.opencontrol.model.chatbot.MessageItem
 import com.example.opencontrol.model.webrtcModels.MessageModel
+import com.example.opencontrol.obj.MessageObj
 import com.example.opencontrol.ui.theme.DarkGrey
 import com.example.opencontrol.ui.theme.Rose
 import com.example.opencontrol.ui.theme.VeryLightGreen
@@ -58,16 +60,18 @@ import com.example.opencontrol.view.items.BottomNavigationBar
 import com.example.opencontrol.view.items.TransientTopBar
 import com.example.opencontrol.view.navigation.NavRoute
 import com.example.opencontrol.view.viewModel.chatbot.ChatBotViewModel
+import kotlinx.coroutines.launch
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
-fun ChatMainScreen(navController: NavController){
+fun ChatMainScreen(navController: NavController) {
 
     val chatBotViewModel: ChatBotViewModel = hiltViewModel()
 
     //chatBotViewModel.somelist.value.add(MessageItem("sdf", "sdf", false))
 
+    val coroutineScope = rememberCoroutineScope()
     val activity = LocalContext.current as Activity
     val window = activity.window
 
@@ -114,16 +118,28 @@ fun ChatMainScreen(navController: NavController){
                             Image(painter = painterResource(id = R.drawable.baseline_send_24),
                                 contentDescription = "send image",
                                 modifier = Modifier.clickable {
-                                    chatBotViewModel.somelist.add(
-                                        MessageItem(
-                                            message = message.value,
-                                            "sdf",
-                                            false
+                                    if (message.value != "") {
+                                        chatBotViewModel.somelist.add(
+                                            MessageItem(
+                                                message = message.value,
+                                                "sdf",
+                                                false
+                                            )
                                         )
-                                    )
-                                    Log.d("TAG", chatBotViewModel.somelist.size.toString())
-                                    message.value = ""
-                                    keyboardController?.hide()
+                                        MessageObj.message.value = message.value
+                                        coroutineScope.launch {
+                                            chatBotViewModel.sendMessage()
+                                            chatBotViewModel.somelist.add(
+                                                MessageItem(
+                                                    message = chatBotViewModel.returnMessage.value.message,
+                                                    "sdf",
+                                                    true
+                                                )
+                                            )
+                                        }
+                                        message.value = ""
+                                        keyboardController?.hide()
+                                    }
                                 })
                         }
                     },
@@ -132,16 +148,18 @@ fun ChatMainScreen(navController: NavController){
             }
         },
         content = {
-            LazyColumn(modifier = Modifier.systemBarsPadding()){
+            LazyColumn(modifier = Modifier.systemBarsPadding()) {
                 items(chatBotViewModel.somelist.toList()) { m ->
                     Row(
                         modifier = Modifier
-                            .fillMaxWidth()) {
+                            .fillMaxWidth()
+                    ) {
                         if (!m.whereAreYouFrom) {
                             Row(
                                 modifier = Modifier
                                     .weight(1f)
-                                    .fillMaxWidth()) {
+                                    .fillMaxWidth()
+                            ) {
                             }
                         }
                         Row(
@@ -217,7 +235,8 @@ fun ChatMainScreen(navController: NavController){
                             Row(
                                 modifier = Modifier
                                     .weight(1f)
-                                    .fillMaxWidth()) {
+                                    .fillMaxWidth()
+                            ) {
                             }
                         }
                     }
@@ -229,7 +248,6 @@ fun ChatMainScreen(navController: NavController){
         }
 
     )
-
 
 
 }

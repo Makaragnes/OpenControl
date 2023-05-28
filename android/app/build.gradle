@@ -3,7 +3,6 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
     id 'com.google.dagger.hilt.android'
-
 }
 
 android {
@@ -107,13 +106,26 @@ dependencies {
     implementation "com.google.accompanist:accompanist-systemuicontroller:0.27.0"
 
     // for webrtc
-    implementation 'com.mesibo.api:webrtc:1.0.5'
+//    implementation 'com.mesibo.api:webrtc:1.0.5'
     implementation 'org.java-websocket:Java-WebSocket:1.5.3'
     implementation 'com.google.code.gson:gson:2.9.1'
     implementation 'com.guolindev.permissionx:permissionx:1.6.1'
 
     // async image
     implementation("io.coil-kt:coil-compose:2.4.0")
+
+    // image loading
+    implementation 'com.github.bumptech.glide:glide:4.15.1'
+
+    // webrtc
+//    implementation(libs.webrtc)
+//    implementation(libs.okhttp.logging)
+    implementation "io.getstream:stream-webrtc-android:1.0.2"
+
+
+    // logger
+    implementation("io.getstream:stream-log:1.1.4")
+    //implementation(libs.stream.log)
 
 }
 

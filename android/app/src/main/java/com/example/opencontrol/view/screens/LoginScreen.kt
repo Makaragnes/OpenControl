@@ -1,7 +1,10 @@
 package com.example.opencontrol.view.screens
 
 import android.app.Activity
+import android.app.Application
+import android.provider.ContactsContract.Contacts.Data
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -24,6 +27,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
@@ -41,6 +45,7 @@ import androidx.navigation.NavController
 import com.example.opencontrol.ui.theme.OpenControlTheme
 import androidx.navigation.compose.rememberNavController
 import com.example.opencontrol.R
+import com.example.opencontrol.obj.DataObj
 import com.example.opencontrol.ui.theme.Black
 import com.example.opencontrol.ui.theme.MagicColor
 import com.example.opencontrol.ui.theme.Rose
@@ -51,6 +56,7 @@ import com.example.opencontrol.ui.theme.standardIndent
 import com.example.opencontrol.ui.theme.transparent_color
 import com.example.opencontrol.view.navigation.NavRoute
 import com.example.opencontrol.view.viewModel.LoginScreenViewModel
+import kotlinx.coroutines.launch
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -59,6 +65,8 @@ fun LoginScreen(navController: NavController) {
 
     //val loginScreenViewModel: LoginScreenViewModel by viewModel()
     val loginScreenViewModel: LoginScreenViewModel = hiltViewModel()
+    val coroutineScope = rememberCoroutineScope()
+
     //val loginScreenViewModel = LoginScreenViewModel(MainRepository(DogService()))
 
     val activity = LocalContext.current as Activity
@@ -75,8 +83,8 @@ fun LoginScreen(navController: NavController) {
 
     Log.d("TAG", loginScreenViewModel.resp.value?.message.toString()            )
 
-    var loginText by remember { mutableStateOf("") }
-    var passwordText by remember { mutableStateOf("") }
+//    var loginText by remember { mutableStateOf("") }
+//    var passwordText by remember { mutableStateOf("") }
 
 
     Column(
@@ -143,8 +151,8 @@ fun LoginScreen(navController: NavController) {
 //                        value = loginText,
 //                        onValueChange = {loginText=it})
                     OutlinedTextField(
-                        value = loginText,
-                        onValueChange = { loginText = it },
+                        value = loginScreenViewModel.login.value,
+                        onValueChange = { loginScreenViewModel.login.value = it },
                         modifier = Modifier
                             .padding(64.dp, 0.dp, 64.dp, 8.dp)
                             .fillMaxWidth(),
@@ -166,8 +174,8 @@ fun LoginScreen(navController: NavController) {
 //                        value = loginText,
 //                        onValueChange = {loginText=it})
                     OutlinedTextField(
-                        value = passwordText,
-                        onValueChange = { passwordText = it },
+                        value = loginScreenViewModel.password.value,
+                        onValueChange = { loginScreenViewModel.password.value = it },
                         modifier = Modifier
                             .padding(64.dp, 8.dp, 64.dp, 8.dp)
                             .fillMaxWidth(),
@@ -192,7 +200,18 @@ fun LoginScreen(navController: NavController) {
                         modifier = Modifier
                             .padding(64.dp, 8.dp, 64.dp, 0.dp)
                             .fillMaxWidth(),
-                        onClick = { navController.navigate(NavRoute.MainScreen.route) }) {
+                        onClick = {
+                            coroutineScope.launch {
+                                loginScreenViewModel.validate()
+                                if (
+                                    DataObj.auth.value?.id != 0 && DataObj.auth.value != null
+                                ) {
+                                    navController.navigate(NavRoute.MainScreen.route)
+                                } else {
+                                    Toast.makeText(activity, "Неправильный логи или пароль", Toast.LENGTH_LONG).show()
+                                }
+                            }
+                             }) {
                         Text(
                             text = "Войти",
                             color = Color.White,
@@ -215,7 +234,18 @@ fun LoginScreen(navController: NavController) {
                         modifier = Modifier
                             .padding(64.dp, 0.dp, 64.dp, 8.dp)
                             .fillMaxWidth(),
-                        onClick = { /*TODO*/ }) {
+                        onClick = {
+                            coroutineScope.launch {
+                                loginScreenViewModel.auth()
+                                if (
+                                    DataObj.auth.value?.id != 0 && DataObj.auth.value != null
+                                ) {
+                                    navController.navigate(NavRoute.MainScreen.route)
+                                } else {
+                                    Toast.makeText(activity, "Такой пользователь уже существует", Toast.LENGTH_LONG).show()
+                                }
+                            }
+                        }) {
                         Text(
                             text = "Зарегистрироваться",
                             //color = Color.White,
