@@ -28,6 +28,7 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -44,6 +45,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.opencontrol.R
 import com.example.opencontrol.model.chatbot.MessageItem
@@ -62,7 +64,7 @@ import com.example.opencontrol.view.viewModel.chatbot.ChatBotViewModel
 @Composable
 fun ChatMainScreen(navController: NavController){
 
-    val chatBotViewModel = ChatBotViewModel()
+    val chatBotViewModel: ChatBotViewModel = hiltViewModel()
 
     //chatBotViewModel.somelist.value.add(MessageItem("sdf", "sdf", false))
 
@@ -76,6 +78,10 @@ fun ChatMainScreen(navController: NavController){
 
     val message = remember {
         mutableStateOf("")
+    }
+
+    LaunchedEffect(Unit) {
+        chatBotViewModel.getInit()
     }
 
     Scaffold(
