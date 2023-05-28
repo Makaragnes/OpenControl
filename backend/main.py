@@ -65,6 +65,7 @@ async def message_resp(item : Item):
         for i in chat_bot_json["info_vocab"]:
             if (message == str(i)): 
                 print(message)
+                x["message"] = ''
                 x["message"] =  chat_bot_json["link"]
                 # y=json.dumps(x)
                 return JSONResponse(x)
@@ -75,13 +76,18 @@ async def message_resp(item : Item):
                 print("faggot")
             else :
                 print(message)
+                x["message"] = ''
                 x["message"] =  chat_bot_json["link"]
                 # y=json.dumps(x)
                 return JSONResponse(x)
         for i in chat_bot_json["department_list_vocab"]:
             if (message == str(i)): 
                 print(message)
-                return JSONResponse(chat_bot_json["department_list"])
+                x["message"] = ''
+                # for i in chat_bot_json["department_list"]:
+                for i in range(0,19):
+                    x["message"] =  x["message"] + "|"+ str(chat_bot_json["department_list"][i]["num"]) +"|"+  chat_bot_json["department_list"][i]["short_name"] 
+                return JSONResponse(x)
             else:
                 print("faggot")
 
@@ -91,15 +97,24 @@ async def message_resp(item : Item):
             else :
                 print(message)
                 change_st(2)
-                 # x["message"] = resp_contents[i];
+
+                x["message"] = ''
                 # return JSONResponse(x)
-                return JSONResponse(chat_bot_json["department_list"])
+                for i in range(0,19):
+                    x["message"] =  x["message"] + "|" + str(chat_bot_json["department_list"][i]["num"])+ "|" + chat_bot_json["department_list"][i]["short_name"]  
+                return JSONResponse(x)
         for i in range (1,20):
+            x["message"] = ''
             if(message == str(resp_contents[i]["short_name"])):
                 print(message)
                 change_st(1)
                 # return JSONResponse(resp_contents[i])
-                x["message"] = resp_contents[i];
+                # x["message"] = resp_contents[i];
+                x["message"] = "Департамент :" + str(resp_contents[i]["department"])  + "|"
+                for j in resp_contents[i]["controll_type"]:
+                    x["message"] = x["message"]  + "Вид надзора, контроля :" + "|" +  str(j["type"]) + "|" 
+                    for k in j["consult"]:
+                        x["message"] = x["message"]  + "Темы  консультации :" + "|" +  str(k["theme"]) + "|" 
                 return JSONResponse(x)
                 # TO_DO:  add  the other cases for this  term
             else :
@@ -109,7 +124,11 @@ async def message_resp(item : Item):
                 if(message==str(i)): 
                     print(message)
                     change_st(1)
-                    x["message"] = resp_contents[i];
+                    x["message"] = "Департамент : " + str(resp_contents[i]["department"])  + "|"
+                    for j in resp_contents[i]["controll_type"]:
+                        x["message"] = x["message"]  + "Вид надзора, контроля :"+ "|"  +  str(j["type"])  + "|"
+                        for k in j["consult"]:
+                            x["message"] = x["message"]  + "Темы  консультации :"+ "|"  +  str(k["theme"])  + "|"
                     return JSONResponse(x)
                 else:
                     print("Faggot 3 ")
@@ -120,15 +139,22 @@ async def message_resp(item : Item):
                 else:
                     print(message)
                     change_st(1)
-                    x["message"] = resp_contents[i];
+                    # x["message"] = resp_contents[i];
+                    x["message"] = "Департамент : " + str(resp_contents[i]["department"])  + "|"
+                    for j in resp_contents[i]["controll_type"]:
+                        x["message"] = x["message"]  + "Вид надзора, контроля :" +  str(j["type"])  + "|"
+                        for k in j["consult"]:
+                            x["message"] = x["message"]  + "Темы  консультации :" +  str(k["theme"])+ "|"
                     return JSONResponse(x)
                 # TO_DO:  add  the other cases for this  term
             else :
                 print(message)
                 change_st(1)
+                x["message"] = ''
                 x["message"] = resp_contents[i];
                 return JSONResponse(x)
         change_st(3)
+        x["message"] = ''
         x["message"] = chat_bot_json["department_no"]
         return JSONResponse(x)
     return JSONResponse(x)
