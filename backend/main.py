@@ -11,6 +11,60 @@ class Item(BaseModel) :
     message : str
 class Item_Id(BaseModel) :
     item_id: int
+# class Personinfo(BaseModel) :
+#     personID: 0
+#     full_name: ""
+#     phone: ""
+#     email: ""
+    # birthday = {
+    #     "day": 0,
+    #     "month": "",
+    #     "year": 0
+    # }
+    # address = {
+    #     "postIndex": 0,
+    #     "country": "",
+    #     "city": "",
+    #     "street": "",
+    #     "house": "",
+    #     "flat": ""
+    # }
+    # passport = {
+    #     "number": 0,
+    #     "series": 0
+    # }
+
+
+# class Businessinfo(BaseModel) :
+#     OGRN : 0,
+#     "fullTitle": "",
+#     "INN": 0,
+#     "establishedCapital": "",
+#     "infoAboutActivity": "",
+#     "additionalActivity": ""
+#     "dataUGRUL": {
+#         "day": 0,
+#         "month": "",
+#         "year": 0
+#     },
+#     "shortTitle": "",
+#     "businessLocation": {
+#         "postIndex": 0,
+#         "country": "",
+#         "city": "",
+#         "street": "",
+#         "house": "",
+#         "flat": ""
+#     },
+#     "nameOfTaxService": "",
+#     "taxLocation": {
+#         "postIndex": 0,
+#         "country": "",
+#         "sity": "",
+#         "streat": "",
+#         "house": "",
+#         "flat": ""
+#     },
 
 with open('./jsons/deps.json') as user_file:
     file_contents = json.load(user_file)
@@ -58,7 +112,7 @@ async def hello_message_resp():
 #version with after all parsing
 
 
-@app.post("/chatbot/{message}")
+@app.post("/chatbot/pull/")
 async def message_resp(item : Item):
     message = item.message
     if state==1 :
