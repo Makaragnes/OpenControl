@@ -2,10 +2,12 @@ from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
 from fastapi.staticfiles import StaticFiles
-from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
+from fastapi.encoders import jsonable_encoder
 import json
 from json import JSONEncoder
+import sys
+import importlib
 
 
 app = FastAPI()
@@ -15,6 +17,7 @@ class Item(BaseModel) :
 class Item_Id(BaseModel) :
     item_id: int
 class Personinfo(BaseModel) :
+    Id : str
     personID: int
     full_name: str
     phone: str
@@ -37,6 +40,7 @@ class Personinfo(BaseModel) :
         "series": ""
     }
 class Businessinfo(BaseModel) :
+    Id : str
     OGRN : str
     fullTitle: str
     INN: str
@@ -132,6 +136,9 @@ class User_hold():
         "user_id" : 0,
         "email" : "",
         "token" : "",
+        "role"  : "user",
+        "department" : "",
+        "filledOut": False,
         "consult_status": [ 
             { 
                 
@@ -185,6 +192,8 @@ class Auth(BaseModel):
     email : str
     token : str
     id    : int
+    role  : str
+    department: str
 class BusinessEncoder(json.JSONEncoder):
     def default(self, o):
             return o.__dict__
@@ -266,7 +275,37 @@ async def init_personal(token : Token):
             person_inf = json.load(user_file)
     finally:
         user_file.close()
-        return JSONResponse(person_inf)
+    try:
+        with open('./jsons/personInfo.json', 'w') as user_file1:
+            person_inf["pi"][0]["Id"] = ""
+            person_inf["pi"][0]["full_name"] = ""
+            person_inf["pi"][0]["phone"] = ""
+            person_inf["pi"][0]["email"] = ""
+            person_inf["pi"][0]["birthday"] =  {
+                                                    "day": "",
+                                                    "month": "",
+                                                    "year": ""
+                                                }
+            person_inf["pi"][0]["address"] = {
+                                                "postIndex": "",
+                                                "country": "",
+                                                "city": "",
+                                                "street": "",
+                                                "house": "",
+                                                "flat": ""
+                                            }
+            person_inf["pi"][0]["pasport"] = {
+                                                "number": "",
+                                                "series": ""
+                                            }
+            user_file1.write(json.dumps(person_inf))                                 
+    finally:
+        user_file.close()
+    for i in person_inf["pi"]:
+        if (i["Id"]== token.token_val): 
+            return JSONResponse(jsonable_encoder(i))
+    return JSONResponse(jsonable_encoder(person_inf["pi"][0]))
+
 
 @app.post("/profile/business/init/")
 async def init_business(token : Token):
@@ -275,27 +314,172 @@ async def init_business(token : Token):
             business_inf = json.load(user_file)
     finally:
         user_file.close()
-        return JSONResponse(business_inf)
+    try:
+        with open('./jsons/businessInfo.json', 'w') as user_file1:
+            business_inf["bi"][0]["Id"] = ""
+            business_inf["bi"][0]["OGRN"] = ""
+            business_inf["bi"][0]["fullTitle"] = ""
+            business_inf["bi"][0]["INN"] = ""
+            business_inf["bi"][0]["establishedCapital"] = ""
+            business_inf["bi"][0]["infoAboutActivity"] = ""
+            business_inf["bi"][0]["additionalActivity"] = ""
+            business_inf["bi"][0]["nameOfTaxService"] = ""
+            business_inf["bi"][0]["shortTitle"] = ""
+            business_inf["bi"][0]["dataUGRUL"] =  {
+                                                "day": "",
+                                                "month": "",
+                                                "year": ""
+                                            }
+            business_inf["bi"][0]["businessLocation"] = {
+                                                "postIndex": "",
+                                                "country": "",
+                                                "city": "",
+                                                "street": "",
+                                                "house": "",
+                                                "flat": ""
+                                            }
+            business_inf["bi"][0]["taxLocation"] = {
+                                                "postIndex": "",
+                                                "country": "",
+                                                "sity": "",
+                                                "streat": "",
+                                                "house": "",
+                                                "flat": ""
+                                            }
+            user_file1.write(json.dumps(business_inf))                                 
+    finally:
+        user_file.close()
+    for i in business_inf["bi"]:
+        if (i["Id"]== token.token_val): 
+            return JSONResponse(jsonable_encoder(i))
+    return JSONResponse(jsonable_encoder(business_inf["bi"][0]))
 
 @app.post("/profile/person/")
 async def init_personal(person_info : Personinfo,token : Token):
     try:
-        with open('./jsons/personInfo.json', 'w') as user_file:
-            user_file.write(json.dumps(person_info, cls=PersonEncoder))
-            person_inf = person_info
+        with open('./jsons/user_db1.json') as user_file:
+            auth_inf = json.load(user_file)
     finally:
-        return JSONResponse(jsonable_encoder(person_info),jsonable_encoder(token.token_val))
+        user_file.close()
+    try:
+        with open('./jsons/personInfo.json') as user_file:
+            person_inf = json.load(user_file)
+    finally:
+        user_file.close()
 
+    for i in person_inf["pi"]:
+        if (i["Id"]== token.token_val):
+            try:
+                with open('./jsons/personInfo.json', 'w') as user_file:
+                    i["Id"] = token.token_val
+                    i["full_name"] = person_info.full_name
+                    i["phone"] = person_info.phone
+                    i["email"] = person_info.email
+                    i["birthday"] = person_info.birthday
+                    i["address"] = person_info.address
+                    i["pasport"] = person_info.passport
+                    user_file.write(json.dumps(person_inf))
+                    return JSONResponse(jsonable_encoder(person_info))                    
+            finally:
+                user_file.close()
+    try:
+        with open('./jsons/personInfo.json', 'w') as user_file1:
+            person_inf["pi"][0]["Id"] = token.token_val
+            person_inf["pi"][0]["full_name"] = person_info.full_name
+            person_inf["pi"][0]["phone"] = person_info.phone
+            person_inf["pi"][0]["email"] = person_info.email
+            person_inf["pi"][0]["birthday"] = person_info.birthday
+            person_inf["pi"][0]["address"] = person_info.address
+            person_inf["pi"][0]["pasport"] = person_info.passport
+            person_inf["pi"].append(person_inf["pi"][0])
+            user_file1.write(json.dumps(person_inf))
+            for i in auth_inf["user"]:
+                if (i["token"] == token.token_val):
+                    try:
+                        with open('./jsons/user_db1.json', 'w') as user_file2:
+                            i["filledOut"] = True
+                            user_file2.write(json.dumps(auth_inf))
+                    finally:
+                        user_file2.close()
+
+            return JSONResponse(jsonable_encoder(person_info))
+    finally:
+        user_file.close()
+
+
+
+@app.post("/profile/filling/")
+async def profile_filling(token : Token):
+    try:
+        with open('./jsons/user_db1.json') as user_file:
+            auth_inf = json.load(user_file)
+    finally:
+        user_file.close()
+    for i in auth_inf["user"]:
+        if (i["token"] == token.token_val):
+            return JSONResponse(jsonable_encoder(i["filledOut"]))
 
 @app.post("/profile/business/")
 async def init_business(business_info : Businessinfo, token : Token):
     try:
-        with open('./jsons/businessInfo.json', 'w') as user_file:
-            user_file.write(json.dumps(business_info,cls=BusinessEncoder))
-            business_inf = business_info
+        with open('./jsons/user_db1.json') as user_file:
+            auth_inf = json.load(user_file)
     finally:
         user_file.close()
-        return JSONResponse(jsonable_encoder(business_info))
+    try:
+        with open('./jsons/businessInfo.json') as user_file:
+            business_inf = json.load(user_file)
+    finally:
+        user_file.close()
+
+    for i in business_inf["bi"]:
+        if (i["Id"]== token.token_val):
+            try:
+                with open('./jsons/businessInfo.json', 'w') as user_file:
+                    i["Id"] = token.token_val
+                    i["OGRN"] = business_info.OGRN
+                    i["fullTitle"] = business_info.fullTitle
+                    i["INN"] = business_info.INN
+                    i["establishedCapital"] = business_info.establishedCapital
+                    i["infoAboutActivity"] = business_info.infoAboutActivity
+                    i["additionalActivity"] = business_info.additionalActivity
+                    i["nameOfTaxService"] = business_info.nameOfTaxService
+                    i["shortTitle"] = business_info.shortTitle
+                    i["dataUGRUL"] =  business_info.dataUGRUL
+                    i["businessLocation"] = business_info.businessLocation
+                    i["taxLocation"] = business_info.taxLocation
+                    user_file.write(json.dumps(business_inf))
+                    return JSONResponse(jsonable_encoder(business_info))                    
+            finally:
+                user_file.close()
+    try:
+        with open('./jsons/businessInfo.json', 'w') as user_file1:
+            business_inf["bi"][0]["Id"] = token.token_val
+            business_inf["bi"][0]["OGRN"] = business_info.OGRN
+            business_inf["bi"][0]["fullTitle"] = business_info.fullTitle
+            business_inf["bi"][0]["INN"] = business_info.INN
+            business_inf["bi"][0]["establishedCapital"] = business_info.establishedCapital
+            business_inf["bi"][0]["infoAboutActivity"] = business_info.infoAboutActivity
+            business_inf["bi"][0]["additionalActivity"] = business_info.additionalActivity
+            business_inf["bi"][0]["nameOfTaxService"] = business_info.nameOfTaxService
+            business_inf["bi"][0]["shortTitle"] = business_info.shortTitle
+            business_inf["bi"][0]["dataUGRUL"] =  business_info.dataUGRUL
+            business_inf["bi"][0]["businessLocation"] = business_info.businessLocation
+            business_inf["bi"][0]["taxLocation"] = business_info.taxLocation
+            business_inf["bi"].append(business_inf["bi"][0])
+            user_file1.write(json.dumps(business_inf))
+            for i in auth_inf["user"]:
+                if (i["token"] == token.token_val):
+                    try:
+                        with open('./jsons/user_db1.json', 'w') as user_file2:
+                            i["filledOut"] = True
+                            user_file2.write(json.dumps(auth_inf))
+                    finally:
+                        user_file2.close()
+
+            return JSONResponse(jsonable_encoder(business_info))
+    finally:
+        user_file.close()
 ##########################
 ##########################
 ###### Part  of  calenda
@@ -334,6 +518,11 @@ async def init_calenda(day : Day):
             # user_file.write(json.dumps(business_info,cls=BusinessEncoder))
     finally:
         user_file.close()
+    # for i in range(0,3):
+    #     if (int(calend_inf["month"][i]["num"]) == calenda_info.month):
+    #         for j in calend_inf["month"][i]["day"]:
+    #             if (calenda_info.day == j["day_num"]):
+    #                 return(JSONResponse(jsonable_encoder(j["time"])))
 
 ##########################
 ##########################
@@ -379,6 +568,8 @@ async def validate(auth : Auth):
         if (i["email"]==auth.email):
             if (i["token"]== auth.token):
                 auth.id=i["user_id"]
+                auth.role = i["role"]
+                auth.department = i["department"]
                 return JSONResponse(jsonable_encoder(auth))
     auth.id=0
     auth.token='0'
@@ -516,7 +707,7 @@ async def message_resp(item : Item):
                 x["message"] = ''
                 # return JSONResponse(x)
                 for i in range(0,19):
-                    x["message"] =  x["message"] + "|" + str(chat_bot_json["department_list"][i]["num"])+ "|" + chat_bot_json["department_list"][i]["short_name"]  
+                    x["message"] =  x["message"] + "\n\r" + str(chat_bot_json["department_list"][i]["num"])+ "\n\r" + chat_bot_json["department_list"][i]["short_name"]  
                 return JSONResponse(x)
         for i in range (1,20):
             x["message"] = ''
@@ -527,9 +718,9 @@ async def message_resp(item : Item):
                 # x["message"] = resp_contents[i];
                 x["message"] = "Департамент :" + str(resp_contents[i]["department"])  + "|"
                 for j in resp_contents[i]["controll_type"]:
-                    x["message"] = x["message"]  + "Вид надзора, контроля :" + "|" +  str(j["type"]) + "|" 
+                    x["message"] = x["message"]  + "Вид надзора, контроля :" + "\n\r" +  str(j["type"]) + "\n\r" 
                     for k in j["consult"]:
-                        x["message"] = x["message"]  + "Темы  консультации :" + "|" +  str(k["theme"]) + "|" 
+                        x["message"] = x["message"]  + "Темы  консультации :" + "\n\r" +  str(k["theme"]) + "\n\r" 
                 return JSONResponse(x)
                 # TO_DO:  add  the other cases for this  term
             else :
@@ -541,9 +732,9 @@ async def message_resp(item : Item):
                     change_st(1)
                     x["message"] = "Департамент : " + str(resp_contents[i]["department"])  + "|"
                     for j in resp_contents[i]["controll_type"]:
-                        x["message"] = x["message"]  + "Вид надзора, контроля :"+ "|"  +  str(j["type"])  + "|"
+                        x["message"] = x["message"]  + "Вид надзора, контроля :"+ "\n\r"  +  str(j["type"])  + "\n\r"
                         for k in j["consult"]:
-                            x["message"] = x["message"]  + "Темы  консультации :"+ "|"  +  str(k["theme"])  + "|"
+                            x["message"] = x["message"]  + "Темы  консультации :"+ "\n\r"  +  str(k["theme"])  + "\n\r"
                     return JSONResponse(x)
                 else:
                     print("the bot  says NOOO")
@@ -555,11 +746,11 @@ async def message_resp(item : Item):
                     print(message)
                     change_st(1)
                     # x["message"] = resp_contents[i];
-                    x["message"] = "Департамент : " + str(resp_contents[i]["department"])  + "|"
+                    x["message"] = "Департамент : " + str(resp_contents[i]["department"])  + "\n\r"
                     for j in resp_contents[i]["controll_type"]:
-                        x["message"] = x["message"]  + "Вид надзора, контроля :" +  str(j["type"])  + "|"
+                        x["message"] = x["message"]  + "Вид надзора, контроля :" +  str(j["type"])  + "\n\r"
                         for k in j["consult"]:
-                            x["message"] = x["message"]  + "Темы  консультации :" +  str(k["theme"])+ "|"
+                            x["message"] = x["message"]  + "Темы  консультации :" +  str(k["theme"])+ "\n\r"
                     return JSONResponse(x)
                 # TO_DO:  add  the other cases for this  term
             else :
